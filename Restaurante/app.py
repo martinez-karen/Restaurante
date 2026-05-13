@@ -59,7 +59,7 @@ def registrar():
     return render_template('registro.html')
 
 
-@app.route("/prinicpal")
+@app.route("/principal")
 def principal():
     return render_template("principal.html")
     
