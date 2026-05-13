@@ -1,4 +1,4 @@
 # restaurante actividad - iseño de incio de sesion
-# equipo
+- equipo
 + martinez luria karen rocio
 + valdez lome karla
