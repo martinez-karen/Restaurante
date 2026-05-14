@@ -3,76 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar tu contraseña - Ambar</title>
+  <title>Recuperar contraseña -  Ambar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/NutriAppp/../static/css/styles.css">
 </head>
 <body class="bg-secondary">
 
   <header class="bg-dark text-light py-3 shadow">
     <div class="container d-flex justify-content-between align-items-center">
-      <h1 class="text-warning fw-bold m-0">
-        Ambar
-      </h1>
+      <h1 class="text-warning fw-bold m-0">  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fork-knife" viewBox="0 0 16 16">
+  <path d="M13 .5c0-.276-.226-.506-.498-.465-1.703.257-2.94 2.012-3 8.462a.5.5 0 0 0 .498.5c.56.01 1 .13 1 1.003v5.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zM4.25 0a.25.25 0 0 1 .25.25v5.122a.128.128 0 0 0 .256.006l.233-5.14A.25.25 0 0 1 5.24 0h.522a.25.25 0 0 1 .25.238l.233 5.14a.128.128 0 0 0 .256-.006V.25A.25.25 0 0 1 6.75 0h.29a.5.5 0 0 1 .498.458l.423 5.07a1.69 1.69 0 0 1-1.059 1.711l-.053.022a.92.92 0 0 0-.58.884L6.47 15a.971.971 0 1 1-1.942 0l.202-6.855a.92.92 0 0 0-.58-.884l-.053-.022a1.69 1.69 0 0 1-1.059-1.712L3.462.458A.5.5 0 0 1 3.96 0z"/>
+</svg> -Ambar</h1>
       <nav class="d-flex flex-wrap align-items-center gap-3">
-        <a href="acerca.html" class="text-light text-decoration-none">Acerca de</a>
-        <a href="/registro" class="text-light text-decoration-none">Servicios</a>
+        <a href="/registro" class="text-light text-decoration-none">Registro</a>
         <a href="/" class="btn btn-warning">Iniciar Sesión</a>
       </nav>
     </div>
   </header>
 
-
   <main class="container my-5">
     <h2 class="text-center text-dark mb-4">Recuperación de contraseña</h2>
 
-    <form class="card shadow-sm p-4 mx-auto" style="max-width: 700px;">
-      
-      <div class="mb-3">
-        <label for="nombre_de_usuario" class="form-label fw-bold">Nombre de usuario</label>
-        <input type="text" id="nombre_de_usuario" class="form-control" placeholder="Escribe tu usuario" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="correo_electronico_de_usuario" class="form-label fw-bold">Correo electrónico</label>
-        <input type="email" id="correo_electronico_de_usuario" class="form-control" placeholder="Escribe tu correo" required>
-      </div>
-
-      <h4 class="section-title mb-3">
-        <i class="bi bi-shield-lock me-2"></i> Seguridad
-      </h4>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="password" class="form-label fw-medium">Contraseña</label>
-          <input type="password" class="form-control" id="password" name="password" required
-                 placeholder="Crea una contraseña segura"
-                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                 title="Debe contener al menos un número, una mayúscula y tener mínimo 8 caracteres">
-          <div class="form-text">
-            <i class="bi bi-info-circle me-1"></i>
-            Mínimo 8 caracteres, incluyendo mayúsculas, minúsculas y números
+    <form method="POST" action="/recuperar" class="card shadow-sm p-4 mx-auto" style="max-width: 520px;">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="alert alert-info">
+            {{ messages[0] }}
           </div>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label for="confirmPassword" class="form-label fw-medium">Confirmar Contraseña</label>
-          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required
-                 placeholder="Repite tu contraseña">
-          <div class="form-text">
-            <i class="bi bi-check-circle me-1"></i>
-            Las contraseñas deben coincidir
-          </div>
-        </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="mb-3">
+        <label for="email" class="form-label fw-bold">Correo electrónico</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Escribe tu correo" required>
       </div>
 
-      <div class="text-center mt-4">
+      <div class="text-center mt-3">
         <button type="submit" class="btn btn-success px-4">
-          <i class="bi bi-send"></i> Recuperar
+          <i class="bi bi-send"></i> Enviar enlace
         </button>
       </div>
     </form>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> 
 </html>
