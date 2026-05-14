@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar tu contraseña - Ambar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/NutriAppp/../static/css/styles.css">
+</head>
+<body class="bg-secondary">
+
+  <header class="bg-dark text-light py-3 shadow">
+    <div class="container d-flex justify-content-between align-items-center">
+      <h1 class="text-warning fw-bold m-0">
+        Ambar
+      </h1>
+      <nav class="d-flex flex-wrap align-items-center gap-3">
+        <a href="acerca.html" class="text-light text-decoration-none">Acerca de</a>
+        <a href="/registro" class="text-light text-decoration-none">Servicios</a>
+        <a href="/" class="btn btn-warning">Iniciar Sesión</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="container my-5">
+    <h2 class="text-center text-dark mb-4">Recuperación de contraseña</h2>
+
+    <form class="card shadow-sm p-4 mx-auto" style="max-width: 700px;">
+      
+      <div class="mb-3">
+        <label for="nombre_de_usuario" class="form-label fw-bold">Nombre de usuario</label>
+        <input type="text" id="nombre_de_usuario" class="form-control" placeholder="Escribe tu usuario" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="correo_electronico_de_usuario" class="form-label fw-bold">Correo electrónico</label>
+        <input type="email" id="correo_electronico_de_usuario" class="form-control" placeholder="Escribe tu correo" required>
+      </div>
+
+      <h4 class="section-title mb-3">
+        <i class="bi bi-shield-lock me-2"></i> Seguridad
+      </h4>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="password" class="form-label fw-medium">Contraseña</label>
+          <input type="password" class="form-control" id="password" name="password" required
+                 placeholder="Crea una contraseña segura"
+                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                 title="Debe contener al menos un número, una mayúscula y tener mínimo 8 caracteres">
+          <div class="form-text">
+            <i class="bi bi-info-circle me-1"></i>
+            Mínimo 8 caracteres, incluyendo mayúsculas, minúsculas y números
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="confirmPassword" class="form-label fw-medium">Confirmar Contraseña</label>
+          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required
+                 placeholder="Repite tu contraseña">
+          <div class="form-text">
+            <i class="bi bi-check-circle me-1"></i>
+            Las contraseñas deben coincidir
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-4">
+          <i class="bi bi-send"></i> Recuperar
+        </button>
+      </div>
+    </form>
+  </main>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> 
+</html>
