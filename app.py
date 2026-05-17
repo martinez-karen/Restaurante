@@ -7,6 +7,25 @@ from pymongo import MongoClient
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
 
+def cargar_env(ruta=".env"):
+    if not os.path.exists(ruta):
+        return
+
+    with open(ruta, encoding="utf-8") as archivo:
+        for linea in archivo:
+            linea = linea.strip()
+            if not linea or linea.startswith("#") or "=" not in linea:
+                continue
+
+            clave, valor = linea.split("=", 1)
+            clave = clave.strip()
+            valor = valor.strip().strip('"').strip("'")
+            os.environ.setdefault(clave, valor)
+
+
+cargar_env()
+
+
 client = MongoClient("mongodb+srv://24308060610098_db_user:karla1223@clusterkarla.qbnowlm.mongodb.net/?retryWrites=true&w=majority&appName=ClusterKarla")
 db = client["restaurante"]
 usuarios = db["usuarios"]
@@ -15,6 +34,16 @@ reservas = db["reservaciones"]
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "algo_secreto")
 serializer = URLSafeTimedSerializer(app.secret_key)
+SMTP_HOSTNAME = os.environ.get("SMTP_HOSTNAME") or os.environ.get("SMPT_HOSTNAME") or "smtp.gmail.com"
+SMTP_TLS_PORT = int(os.environ.get("SMTP_TLS_PORT") or os.environ.get("SMPT_TLS_PORT") or 587)
+SMTP_USER = os.environ.get("SMTP_USER") or os.environ.get("SMPT_USER") or os.environ.get("GMAIL_USER")
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD") or os.environ.get("SMPT_PASSWORD") or os.environ.get("GMAIL_APP_PASSWORD")
+
+if SMTP_HOSTNAME == "smpt.gmail.com":
+    SMTP_HOSTNAME = "smtp.gmail.com"
+
+if SMTP_HOSTNAME == "smtp.gmail.com" and SMTP_PASSWORD:
+    SMTP_PASSWORD = SMTP_PASSWORD.replace(" ", "")
 
 
 def password_valida(password):
@@ -27,18 +56,12 @@ def password_valida(password):
 
 
 def enviar_correo_recuperacion(destinatario, enlace):
-    smtp_host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
-    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
-    smtp_user = os.environ.get("SMTP_USER")
-    smtp_password = os.environ.get("SMTP_PASSWORD")
-    email_from = os.environ.get("EMAIL_FROM", smtp_user)
-
-    if not smtp_user or not smtp_password or not email_from:
-        raise RuntimeError("Faltan SMTP_USER, SMTP_PASSWORD o EMAIL_FROM")
+    if not SMTP_USER or not SMTP_PASSWORD:
+        raise RuntimeError("Faltan SMTP_USER o SMTP_PASSWORD")
 
     mensaje = EmailMessage()
     mensaje["Subject"] = "Recuperacion de contraseña - Ambar"
-    mensaje["From"] = email_from
+    mensaje["From"] = SMTP_USER
     mensaje["To"] = destinatario
     mensaje.set_content(
         f"""Hola.
@@ -53,9 +76,9 @@ Si no solicitaste este cambio, ignora este correo.
 """
     )
 
-    with smtplib.SMTP(smtp_host, smtp_port) as servidor:
+    with smtplib.SMTP(SMTP_HOSTNAME, SMTP_TLS_PORT, timeout=15) as servidor:
         servidor.starttls()
-        servidor.login(smtp_user, smtp_password)
+        servidor.login(SMTP_USER, SMTP_PASSWORD)
         servidor.send_message(mensaje)
 
 
