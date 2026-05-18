@@ -1,4 +1,5 @@
-# restaurante actividad - diseño de incio de sesion
+# restaurante actividad - Recuperacion de contraseña con link de correo gmail
+
 ***Nombres del equipo***
 + martinez luria karen rocio
 + valdez lome karla
