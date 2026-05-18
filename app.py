@@ -1,5 +1,6 @@
 import os
 import smtplib
+import bcrypt 
 from email.message import EmailMessage
 
 from flask import Flask, render_template, request, redirect, flash, url_for
@@ -94,7 +95,15 @@ def inicio():
             flash("Correo no registrado")
             return render_template("inicio.html")
 
-        if usuario.get("contraseña") != password:
+        password_guardada = usuario.get("contraseña")
+
+        if isinstance(password_guardada, str):
+            password_guardada = password_guardada.encode("utf-8")
+
+        if not bcrypt.checkpw(
+            password.encode("utf-8"),
+            password_guardada
+        ):
             flash("Contraseña incorrecta")
             return render_template("inicio.html")
 
@@ -122,17 +131,20 @@ def registrar():
         if not password_valida(password):
             flash("La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número")
             return render_template("registro.html")
+        
+        password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         usuarios.insert_one({
             "nombre": nombre,
             "apellidos": apellidos,
             "correo": email,
-            "contraseña": password,
+            "contraseña": password_hash,
         })
 
         return redirect("/principal")
 
     return render_template("registro.html")
+
 
 
 @app.route("/principal")
@@ -198,9 +210,14 @@ def restablecer_password(token):
             flash("La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número")
             return render_template("restablecer_contraseña.html")
 
+        nuevo_hash = bcrypt.hashpw(
+            password.encode("utf-8"),
+            bcrypt.gensalt()
+            ).decode("utf-8")
+
         usuarios.update_one(
             {"correo": email},
-            {"$set": {"contraseña": password}},
+            {"$set": {"contraseña": nuevo_hash}},
         )
 
         flash("Contraseña actualizada. Ya puedes iniciar sesión")
