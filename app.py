@@ -3,7 +3,7 @@ import smtplib
 import bcrypt 
 from email.message import EmailMessage
 
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, session
 from pymongo import MongoClient
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
@@ -107,6 +107,10 @@ def inicio():
             flash("Contraseña incorrecta")
             return render_template("inicio.html")
 
+        session["usuario_id"] = str(usuario["_id"])
+        session["nombre_usuario"] = usuario.get("nombre", "usuario")
+        session["correo_usuario"] = usuario.get("correo", email)
+
         return redirect("/principal")
 
     return render_template("inicio.html")
@@ -134,12 +138,16 @@ def registrar():
         
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-        usuarios.insert_one({
+        resultado = usuarios.insert_one({
             "nombre": nombre,
             "apellidos": apellidos,
             "correo": email,
             "contraseña": password_hash,
         })
+
+        session["usuario_id"] = str(resultado.inserted_id)
+        session["nombre_usuario"] = nombre
+        session["correo_usuario"] = email
 
         return redirect("/principal")
 
@@ -150,6 +158,18 @@ def registrar():
 @app.route("/principal")
 def principal():
     return render_template("principal.html")
+
+
+@app.route("/menu")
+def menu():
+    return render_template("menu.html")
+
+
+@app.route("/cerrar-sesion")
+def cerrar_sesion():
+    session.clear()
+    flash("Sesion cerrada correctamente")
+    return redirect("/")
 
 
 @app.route("/recuperar", methods=["GET", "POST"])
