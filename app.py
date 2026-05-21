@@ -251,8 +251,8 @@ def mostrar_reservas():
     return render_template("reservas.html")
 
 @app.route("/domicilio")
-def mostrar_reservas():
-    return render_template("domi.html")
+def pedidos():
+    return render_template("domicilio.html")
 
 
 if __name__ == "__main__":
