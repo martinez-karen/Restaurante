@@ -250,6 +250,10 @@ def restablecer_password(token):
 def mostrar_reservas():
     return render_template("reservas.html")
 
+@app.route("/domicilio")
+def mostrar_reservas():
+    return render_template("domi.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
