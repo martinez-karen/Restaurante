@@ -165,6 +165,31 @@ def menu():
     return render_template("menu.html")
 
 
+@app.route("/bebidas")
+def bebidas():
+    return render_template("bebidas.html")
+
+
+@app.route("/postres")
+def postres():
+    return render_template("postres.html")
+
+
+@app.route("/disponibilidad")
+def disponibilidad():
+    return render_template("disponibilidad.html")
+
+
+@app.route("/opiniones")
+def opiniones():
+    return render_template("opiniones.html")
+
+
+@app.route("/acerca-de")
+def acerca_de():
+    return render_template("acerca_de.html")
+
+
 @app.route("/cerrar-sesion")
 def cerrar_sesion():
     session.clear()

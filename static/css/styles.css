@@ -2,6 +2,14 @@
     background-color: #AACDDC;;
 }
 
+.navbar-brand-ambar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
 .card-body1{
     background-color: #F3E3D0;
 }

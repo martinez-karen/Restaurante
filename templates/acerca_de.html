@@ -4,21 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reservas - Ambar</title>
+  <title>Acerca de - Ambar</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
-<body class="min-vh-100 d-flex flex-column"
-  style="background-image: url('{{ url_for('static', filename='img/dime.jpg') }}'); background-size: cover; background-position: center;">
+<body class="min-vh-100 d-flex flex-column cuerpo">
   {% include "_navbar.html" %}
 
   <main class="container my-5 flex-grow-1">
     <section class="card shadow p-4 text-center">
-      <h1 class="fw-bold mb-3">Reserva ahora en Ambar</h1>
-      <p class="mb-4">Elige tu fecha, hora y numero de personas para preparar tu mesa.</p>
-      <a href="{{ url_for('menu') }}" class="btn btn-primary mx-auto">Ver menu</a>
+      <h1 class="fw-bold mb-3">Acerca de Ambar</h1>
+      <p class="mb-0">Restaurante dedicado a ofrecer comida fresca, bebidas y postres para compartir buenos momentos.</p>
     </section>
   </main>
 

@@ -9,39 +9,10 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="cuerpo">
-
-    <header class="bg-dark text-light py-3 shadow">
-        <div class=" d-flex justify-content-between align-items-center">
-            <h1 class="titulo-app"> <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
-                    class="bi bi-fork-knife" viewBox="0 0 16 16">
-                    <path
-                        d="M13 .5c0-.276-.226-.506-.498-.465-1.703.257-2.94 2.012-3 8.462a.5.5 0 0 0 .498.5c.56.01 1 .13 1 1.003v5.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zM4.25 0a.25.25 0 0 1 .25.25v5.122a.128.128 0 0 0 .256.006l.233-5.14A.25.25 0 0 1 5.24 0h.522a.25.25 0 0 1 .25.238l.233 5.14a.128.128 0 0 0 .256-.006V.25A.25.25 0 0 1 6.75 0h.29a.5.5 0 0 1 .498.458l.423 5.07a1.69 1.69 0 0 1-1.059 1.711l-.053.022a.92.92 0 0 0-.58.884L6.47 15a.971.971 0 1 1-1.942 0l.202-6.855a.92.92 0 0 0-.58-.884l-.053-.022a1.69 1.69 0 0 1-1.059-1.712L3.462.458A.5.5 0 0 1 3.96 0z" />
-                </svg> Ambar </h1>
-            <nav class="d-flex flex-wrap align-items-center gap-3">
-                <a href="#" class="text-light text-decoration-none">Acerda de</a>
-                <a href="#" class="text-light text-decoration-none">Disponibilidad</a>
-                <a href="#" class="text-light text-decoration-none">Opiniones</a>
-                {% if session.get('nombre_usuario') %}
-                <details class="position-relative">
-                    <summary class="btn btn-warning">
-                        Bienvenid@, {{ session.get('nombre_usuario') }}
-                    </summary>
-                    <div class="card shadow-sm position-absolute end-0 mt-2 p-2" style="z-index: 10; min-width: 180px;">
-                        <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-outline-danger btn-sm">
-                            Cerrar sesion
-                        </a>
-                    </div>
-                </details>
-                {% else %}
-                <a href="{{ url_for('inicio') }}" class="btn btn-warning">Iniciar sesion</a>
-                {% endif %}
-            </nav>
-        </div>
-    </header>
+    {% include "_navbar.html" %}
 
 
     <div class="card shadow col-10 container py-3 px-3 text-center mb-2 mt-3">
@@ -75,11 +46,13 @@
       </div>
     </div>
   </div>
+  
 </div>
     </div>
     </div>
     </div>
 
+    {% include "_footer.html" %}
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postres - Ambar</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <style>
+    .hero-section {
+      height: 500px;
+      background-image: url('https://i.pinimg.com/1200x/2b/b8/a1/2bb8a179ca78c4848a65dcccc0c51b1c.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    .hero-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-section .container {
+      position: relative;
+      z-index: 2;
+    }
+  </style>
+</head>
+
+<body>
+  {% include "_navbar.html" %}
+
+  <section class="hero-section d-flex align-items-center text-center text-white">
+    <div class="container">
+      <h1 class="display-4 fw-bold">Nuestro menu</h1>
+    </div>
+  </section>
+
+  <section class="bg-dark py-5">
+    <div class="container">
+      {% include "_menu_tabs.html" %}
+
+      <div class="text-center text-white m-5">
+        <h3 class="fw-bold">Postres</h3>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://i.pinimg.com/736x/3f/06/64/3f066486b7a5e930c7f9ea9bd3e03685.jpg"
+              class="card-img-top" alt="Pastel de chocolate" height="225">
+            <div class="card-body text-center">
+              <p class="card-text">Pastel de chocolate</p>
+              <button class="btn btn-primary">Agregar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://i.pinimg.com/736x/67/73/66/67736660cc655c5b0fb60b4ed1b81298.jpg"
+              class="card-img-top" alt="Flan napolitano" height="225">
+            <div class="card-body text-center">
+              <p class="card-text">Flan napolitano</p>
+              <button class="btn btn-primary">Agregar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://i.pinimg.com/736x/c5/59/8e/c5598e8d0e7463b5f18642afedb25926.jpg"
+              class="card-img-top" alt="Pay de limon" height="225">
+            <div class="card-body text-center">
+              <p class="card-text">Pay de limon</p>
+              <button class="btn btn-primary">Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% include "_footer.html" %}
+</body>
+
+</html>
