@@ -2,8 +2,12 @@
     background-color: #000000;;
 }
 
+.cafe{
+    background-color: #140e06;
+}
+
 .navbar{
-            background-color: #681515;
+            background-color: #530e0e;
 }
 
 .navbar-brand-ambar {
@@ -29,8 +33,4 @@
   color: #681515;
   margin: 0;
   text-transform: uppercase;
-}
-
-.btn1{
-    background-color: #1100ff;
 }
