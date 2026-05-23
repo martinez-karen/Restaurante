@@ -1,4 +1,4 @@
-<header class="bg-dark text-light py-3 shadow">
+<header class="navbar text-light py-3 shadow">
   <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
     <a href="{{ url_for('principal') }}" class="navbar-brand-ambar text-light text-decoration-none">
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
@@ -16,17 +16,17 @@
 
       {% if session.get('nombre_usuario') %}
       <details class="position-relative">
-        <summary class="btn btn-warning">
+        <summary class="btn btn-secondary">
           Bienvenid@, {{ session.get('nombre_usuario') }}
         </summary>
-        <div class="card shadow-sm position-absolute end-0 mt-2 p-2" style="z-index: 10; min-width: 180px;">
-          <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-outline-danger btn-sm">
+        <div class="card shadow-sm position-absolute end-0 mt-2 p-2 " style="z-index: 10;">
+          <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-outline-white btn-sm btn-secondary">
             Cerrar sesion
           </a>
         </div>
       </details>
       {% else %}
-      <a href="{{ url_for('inicio') }}" class="btn btn-warning">Iniciar sesion</a>
+      <a href="{{ url_for('inicio') }}" class="btn btn-secondary">Iniciar sesion</a>
       {% endif %}
     </nav>
   </div>

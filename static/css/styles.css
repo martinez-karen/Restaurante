@@ -1,5 +1,9 @@
 .cuerpo{
-    background-color: #AACDDC;;
+    background-color: #000000;;
+}
+
+.navbar{
+            background-color: #681515;
 }
 
 .navbar-brand-ambar {
@@ -16,4 +20,17 @@
 
 .card-body2{
     background-color: #F3E3D0;
+}
+
+.logo-title {
+  font-family: 'Cinzel', serif;
+  font-size: 3.2rem;
+  letter-spacing: 8px;
+  color: #681515;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.btn1{
+    background-color: #1100ff;
 }
