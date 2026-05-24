@@ -31,6 +31,8 @@ client = MongoClient("mongodb+srv://24308060610098_db_user:karla1223@clusterkarl
 db = client["restaurante"]
 usuarios = db["usuarios"]
 reservas = db["reservaciones"]
+opiniones = db["opiniones"]
+envios = db["envios"]
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "algo_secreto")

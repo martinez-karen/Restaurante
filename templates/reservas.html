@@ -9,20 +9,125 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
-
-<body class="min-vh-100 d-flex flex-column"
-  style="background-image: url('{{ url_for('static', filename='img/dime.jpg') }}'); background-size: cover; background-position: center;">
+<body class="bg-dark">
   {% include "_navbar.html" %}
 
   <main class="container my-5 flex-grow-1">
     <section class="card shadow p-4 text-center">
       <h1 class="fw-bold mb-3">Reserva ahora en Ambar</h1>
       <p class="mb-4">Elige tu fecha, hora y numero de personas para preparar tu mesa.</p>
-      <a href="{{ url_for('menu') }}" class="btn btn-primary mx-auto">Ver menu</a>
+<div class="col-12 mb-4">
+    <a href="{{ url_for('menu') }}" class="text-secondary text-decoration-none m-5 col-6">menu</a>
+    <a href="#" class="text-secondary text-decoration-none m-5 col-6">orden</a>
+</div>
+       <form>
+           <div class="row g-2 mb-3">
+    
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text input-group-text-custom"><i class="bi bi-calendar3"></i></span>
+            <input type="date" class="form-control input-with-icon" id="fechaReserva" required>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text input-group-text-custom"><i class="bi bi-clock"></i></span>
+            <select class="form-select input-with-icon">
+                <option value="13:00">1:00 PM</option>
+                <option value="13:30">1:30 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="14:30">2:30 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="15:30">3:30 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="16:30">4:30 PM</option>
+                <option value="17:00">5:00 PM</option>
+                <option value="17:30">5:30 PM</option>
+                <option value="18:00">6:00 PM</option>
+                <option value="18:30">6:30 PM</option>
+                <option value="19:00" selected>7:00 PM</option>
+                <option value="19:30">7:30 PM</option>
+                <option value="20:00">8:00 PM</option>
+                <option value="20:30">8:30 PM</option>
+                <option value="21:00">9:00 PM</option>
+                <option value="21:30">9:30 PM</option>
+                <option value="22:00">10:00 PM</option>
+                <option value="22:30">10:30 PM</option>
+                <option value="23:00">11:00 PM</option>
+                <option value="23:30">11:30 PM</option>
+                <option value="00:00">12:00 AM</option>
+                <option value="00:30">12:30 AM</option>
+                <option value="01:00">1:00 AM</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text input-group-text-custom"><i class="bi bi-person"></i></span>
+            <select class="form-select input-with-icon">
+                <option value="1">1 persona</option>
+                <option value="2" selected>2 personas</option>
+                <option value="3">3 personas</option>
+                <option value="4">4 personas</option>
+                <option value="5">5 personas</option>
+                <option value="6">6 personas</option>
+                <option value="7">7 personas</option>
+                <option value="8">8 personas</option>
+                <option value="9">9 personas</option>
+                <option value="10">10 personas</option>
+                <option value="11">11 personas</option>
+                <option value="12">12 personas</option>
+                <option value="13">13 personas</option>
+                <option value="14">14 personas</option>
+                <option value="15">15 personas</option>
+            </select>
+        </div>
+    </div>
+    
+</div>
+            
+        </form>
+    </div>
+
+
+    <div class="reservation-card">
+        <form>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="Nombre de pila">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="Apellido">
+                </div>
+                
+                <div class="col-md-6">
+                    <select class="form-select">
+                        <option selected disabled>Selecciona una ocasión (opcional)</option>
+                        <option>Cumpleaños</option>
+                        <option>Aniversario</option>
+                        <option>Cena de negocios</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <textarea class="form-control" rows="1" placeholder="Añadir una petición especial (opcional)"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
     </section>
+      
+    
   </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
 
   {% include "_footer.html" %}
-</body>
 
 </html>
