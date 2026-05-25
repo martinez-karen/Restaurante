@@ -1,6 +1,6 @@
 # restaurante actividad - Recuperacion de contraseña con link de correo gmail
 
-descricon:  Este es una pagina web en donde los clientes pueden hacer sus pedidos o reservaciones desde casa, el trabajo de hoy era hacer que la plantilla de recuperacion de contraseña funcionara, para esto utilizamos smtp para gestionar los correos gmail y que les enviara un link de recuperacion de contraseña
+descricon:  avances de nuestro proyecto final 
 
 ***Nombres del equipo***
 + Martinez Luria Karen Rocio
