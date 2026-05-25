@@ -281,6 +281,11 @@ def mostrar_reservas():
 def pedidos():
     return render_template("domicilio.html")
 
+@app.route("/orden")
+def orden():
+    return render_template("orden.html")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
