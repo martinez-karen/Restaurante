@@ -3,7 +3,7 @@
 }
 
 .cafe{
-    background-color: #3a2204;
+    background-color: #330909;
 }
 
 .navbar{
@@ -62,10 +62,19 @@ textarea{
     height: 80px;
 }
 
-.Orden{
+.orden{
     color: #90ccd6;
+    width: 100%;
+    padding: 20px;
+    font-size: 22px;
 }
 
 .Titu{
-    color: #681515;
+    color: #421212;
 }
+.comi{
+    background-color: rgb(126, 86, 86);
+}
+
+
+

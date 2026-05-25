@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orden de Pedido</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow p-4" style="max-width: 800px; width: 100%;">
 
-    <div class="contenedor">
+        <h1 class="text-center mb-4 fs-3 fw-bold text-danger">
+            Finalizar Pedido
+        </h1>
 
-        <h1 class="Titu">Finalizar Pedido </h1>
+        <form class="d-flex flex-column gap-3">
 
-        <form>
+            <input type="text" class="form-control" placeholder="Nombre completo" required>
 
-            <input type="text" placeholder="Nombre completo" required>
+            <input type="text" class="form-control" placeholder="Dirección" required>
 
-            <input type="text" placeholder="Dirección" required>
+            <input type="text" class="form-control" placeholder="Código Postal" required>
 
-            <input type="text" placeholder="Código Postal" required>
+            <input type="tel" class="form-control" placeholder="Teléfono" required>
 
-            <input type="tel" placeholder="Teléfono" required>
-
-            <select required>
-                <option value="">Método de pago</option>
-                <option>Tarjeta</option>
-                <option>Efectivo</option>
-                <option>Transferencia</option>
+            <select class="form-select" required>
+                <option value="" disabled selected>Método de pago</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="transferencia">Transferencia</option>
             </select>
 
-            <button type="submit">
+            <button type="submit" class="btn btn-danger w-100 mt-2">
                 Confirmar Pedido
             </button>
 
