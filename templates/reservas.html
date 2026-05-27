@@ -6,34 +6,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reservas - Ambar</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-<body class="bg-dark">
+
+<body class="bg-dark d-flex flex-column min-vh-100">
   {% include "_navbar.html" %}
 
   <main class="container my-5 flex-grow-1">
-    <section class="card shadow p-4 text-center">
+    {% with mensajes = get_flashed_messages() %}
+      {% if mensajes %}
+        <div class="alert alert-info shadow-sm" role="alert">
+          {% for mensaje in mensajes %}
+            <div>{{ mensaje }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="card shadow p-4 text-center mb-4">
       <h1 class="fw-bold mb-3">Reserva ahora en Ambar</h1>
       <p class="mb-4">Elige tu fecha, hora y numero de personas para preparar tu mesa.</p>
-<div class="col-12 mb-4">
-    <a href="{{ url_for('menu') }}" class="text-secondary text-decoration-none m-5 col-6">menu</a>
-    <a href="#" class="text-secondary text-decoration-none m-5 col-6">orden</a>
-</div>
-       <form>
-           <div class="row g-2 mb-3">
-    
-    <div class="col-md-4">
-        <div class="input-group">
-            <span class="input-group-text input-group-text-custom"><i class="bi bi-calendar3"></i></span>
-            <input type="date" class="form-control input-with-icon" id="fechaReserva" required>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="input-group">
-            <span class="input-group-text input-group-text-custom"><i class="bi bi-clock"></i></span>
-            <select class="form-select input-with-icon">
+
+      <form method="post" action="{{ url_for('mostrar_reservas') }}">
+        <div class="row g-2 mb-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text input-group-text-custom"><i class="bi bi-calendar3"></i></span>
+              <input type="date" class="form-control input-with-icon" name="fecha" id="fechaReserva" required>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text input-group-text-custom"><i class="bi bi-clock"></i></span>
+              <select class="form-select input-with-icon" name="hora" required>
                 <option value="13:00">1:00 PM</option>
                 <option value="13:30">1:30 PM</option>
                 <option value="14:00">2:00 PM</option>
@@ -53,85 +60,89 @@
                 <option value="21:00">9:00 PM</option>
                 <option value="21:30">9:30 PM</option>
                 <option value="22:00">10:00 PM</option>
-                <option value="22:30">10:30 PM</option>
-                <option value="23:00">11:00 PM</option>
-                <option value="23:30">11:30 PM</option>
-                <option value="00:00">12:00 AM</option>
-                <option value="00:30">12:30 AM</option>
-                <option value="01:00">1:00 AM</option>
-            </select>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="input-group">
-            <span class="input-group-text input-group-text-custom"><i class="bi bi-person"></i></span>
-            <select class="form-select input-with-icon">
-                <option value="1">1 persona</option>
-                <option value="2" selected>2 personas</option>
-                <option value="3">3 personas</option>
-                <option value="4">4 personas</option>
-                <option value="5">5 personas</option>
-                <option value="6">6 personas</option>
-                <option value="7">7 personas</option>
-                <option value="8">8 personas</option>
-                <option value="9">9 personas</option>
-                <option value="10">10 personas</option>
-                <option value="11">11 personas</option>
-                <option value="12">12 personas</option>
-                <option value="13">13 personas</option>
-                <option value="14">14 personas</option>
-                <option value="15">15 personas</option>
-            </select>
-        </div>
-    </div>
-    
-</div>
-            
-        </form>
-    </div>
-
-
-    <div class="reservation-card">
-        <form>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <input type="text" class="form-control" placeholder="Nombre de pila">
-                </div>
-                <div class="col-md-6">
-                    <input type="text" class="form-control" placeholder="Apellido">
-                </div>
-                
-                <div class="col-md-6">
-                    <select class="form-select">
-                        <option selected disabled>Selecciona una ocasión (opcional)</option>
-                        <option>Cumpleaños</option>
-                        <option>Aniversario</option>
-                        <option>Cena de negocios</option>
-                    </select>
-                </div>
-                
-                <div class="col-md-6">
-                    <textarea class="form-control" rows="1" placeholder="Añadir una petición especial (opcional)"></textarea>
-                </div>
+              </select>
             </div>
-        </form>
-    </div>
-        <div class="col-md-12 m-3">
-            <button type="submit" class="col-6 btn btn-secondary w-50 m-2">Confirmar Reserva</button>
-            <button type="submit" class="col-6 btn btn-secondary w-50 m-2">Ver tus reservas</button>
+          </div>
+
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text input-group-text-custom"><i class="bi bi-person"></i></span>
+              <select class="form-select input-with-icon" name="personas" required>
+                {% for cantidad in range(1, 16) %}
+                  <option value="{{ cantidad }}" {% if cantidad == 2 %}selected{% endif %}>{{ cantidad }} persona{% if cantidad > 1 %}s{% endif %}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
         </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="nombre" placeholder="Nombre de pila" value="{{ session.get('nombre_usuario', '') }}" required>
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="apellido" placeholder="Apellido" required>
+          </div>
+
+          <div class="col-md-6">
+            <select class="form-select" name="ocasion">
+              <option value="">Selecciona una ocasion (opcional)</option>
+              <option>Cumpleanos</option>
+              <option>Aniversario</option>
+              <option>Cena de negocios</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <textarea class="form-control" rows="1" name="peticion" placeholder="Anadir una peticion especial (opcional)"></textarea>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+          <button type="submit" class="btn btn-secondary px-5 w-100">Confirmar Reserva</button>
+        </div>
+      </form>
     </section>
-      
-    
+
+    <section id="tus-reservas" class="card shadow p-4">
+      <h2 class="fw-bold text-center mb-4">Tus reservas</h2>
+
+      {% if reservas %}
+        <div class="row g-3">
+          {% for reserva in reservas %}
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-start">
+                  <h5 class="fw-bold mb-2">{{ reserva.nombre }} {{ reserva.apellido }}</h5>
+                  <p class="mb-1"><strong>Fecha:</strong> {{ reserva.fecha }}</p>
+                  <p class="mb-1"><strong>Hora:</strong> {{ reserva.hora }}</p>
+                  <p class="mb-1"><strong>Personas:</strong> {{ reserva.personas }}</p>
+                  {% if reserva.ocasion %}
+                    <p class="mb-1"><strong>Ocasion:</strong> {{ reserva.ocasion }}</p>
+                  {% endif %}
+                  {% if reserva.peticion %}
+                    <p class="mb-0"><strong>Peticion:</strong> {{ reserva.peticion }}</p>
+                  {% endif %}
+
+                  <form method="post" action="{{ url_for('eliminar_reserva', reserva_id=reserva['_id']) }}" class="mt-2">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar reserva</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-secondary text-center mb-0" role="alert">
+          Todavia no tienes reservas registradas.
+        </div>
+      {% endif %}
+    </section>
   </main>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
 
   {% include "_footer.html" %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
 </html>

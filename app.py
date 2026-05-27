@@ -2,8 +2,10 @@ import os
 import smtplib
 import bcrypt 
 from email.message import EmailMessage
+from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, flash, url_for, session
+from bson import ObjectId
 from pymongo import MongoClient
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
@@ -31,7 +33,7 @@ client = MongoClient("mongodb+srv://24308060610098_db_user:karla1223@clusterkarl
 db = client["restaurante"]
 usuarios = db["usuarios"]
 reservas = db["reservaciones"]
-opiniones = db["opiniones"]
+opiniones_collection = db["opiniones"]
 envios = db["envios"]
 
 app = Flask(__name__)
@@ -182,9 +184,59 @@ def disponibilidad():
     return render_template("disponibilidad.html")
 
 
-@app.route("/opiniones")
-def opiniones():
-    return render_template("opiniones.html")
+@app.route("/opiniones", methods=["GET", "POST"], endpoint="opiniones")
+def mostrar_opiniones():
+    if request.method == "POST":
+        nombre = request.form.get("nombre", "").strip()
+        descripcion = request.form.get("descripcion", "").strip()
+        calificacion = request.form.get("calificacion", "5")
+
+        if not nombre or not descripcion:
+            flash("Escribe tu nombre y opinion para publicarla")
+            return redirect(url_for("opiniones"))
+
+        try:
+            calificacion = int(calificacion)
+        except ValueError:
+            calificacion = 5
+
+        calificacion = min(max(calificacion, 1), 5)
+
+        opiniones_collection.insert_one({
+            "nombre": nombre,
+            "descripcion": descripcion,
+            "calificacion": calificacion,
+            "likes": 0,
+            "dislikes": 0,
+            "creado_en": datetime.utcnow(),
+            "usuario_id": session.get("usuario_id"),
+        })
+
+        flash("Opinion agregada correctamente")
+        return redirect(url_for("opiniones"))
+
+    opiniones_lista = list(opiniones_collection.find().sort("creado_en", -1))
+    return render_template("opiniones.html", opiniones=opiniones_lista)
+
+
+@app.route("/opiniones/<opinion_id>/<accion>", methods=["POST"])
+def votar_opinion(opinion_id, accion):
+    if accion not in ["like", "dislike"]:
+        flash("Voto no valido")
+        return redirect(url_for("opiniones"))
+
+    campo = "likes" if accion == "like" else "dislikes"
+
+    try:
+        opiniones_collection.update_one(
+            {"_id": ObjectId(opinion_id)},
+            {"$inc": {campo: 1}},
+        )
+        flash("Gracias por votar")
+    except Exception:
+        flash("No se pudo registrar tu voto")
+
+    return redirect(url_for("opiniones"))
 
 
 @app.route("/acerca-de")
@@ -273,9 +325,56 @@ def restablecer_password(token):
     return render_template("restablecer_contraseña.html")
 
 
-@app.route("/reservas")
+@app.route("/reservas", methods=["GET", "POST"])
 def mostrar_reservas():
-    return render_template("reservas.html")
+    if request.method == "POST":
+        reserva = {
+            "fecha": request.form.get("fecha", "").strip(),
+            "hora": request.form.get("hora", "").strip(),
+            "personas": request.form.get("personas", "").strip(),
+            "nombre": request.form.get("nombre", "").strip(),
+            "apellido": request.form.get("apellido", "").strip(),
+            "ocasion": request.form.get("ocasion", "").strip(),
+            "peticion": request.form.get("peticion", "").strip(),
+            "usuario_id": session.get("usuario_id"),
+            "correo": session.get("correo_usuario"),
+            "creado_en": datetime.utcnow(),
+        }
+
+        if not reserva["fecha"] or not reserva["hora"] or not reserva["personas"] or not reserva["nombre"] or not reserva["apellido"]:
+            flash("Completa fecha, hora, personas, nombre y apellido")
+            return redirect(url_for("mostrar_reservas"))
+
+        reservas.insert_one(reserva)
+        flash("Reserva confirmada correctamente")
+        return redirect(url_for("mostrar_reservas"))
+
+    filtro = {}
+    if session.get("usuario_id"):
+        filtro = {"usuario_id": session.get("usuario_id")}
+
+    reservas_lista = list(reservas.find(filtro).sort("creado_en", -1))
+    return render_template("reservas.html", reservas=reservas_lista)
+
+@app.route("/reservas/<reserva_id>/eliminar", methods=["POST"])
+def eliminar_reserva(reserva_id):
+    try:
+        reserva_object_id = ObjectId(reserva_id)
+    except Exception:
+        flash("Reserva no valida")
+        return redirect(url_for("mostrar_reservas"))
+
+    filtro = {"_id": reserva_object_id}
+    if session.get("usuario_id"):
+        filtro["usuario_id"] = session.get("usuario_id")
+
+    resultado = reservas.delete_one(filtro)
+    if resultado.deleted_count:
+        flash("Reserva eliminada correctamente")
+    else:
+        flash("No se encontro la reserva")
+
+    return redirect(url_for("mostrar_reservas"))
 
 @app.route("/domicilio")
 def pedidos():
