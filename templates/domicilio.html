@@ -18,7 +18,11 @@
     <section class="card shadow p-4 text-center">
       <h1 class="fw-bold mb-3">Pide tu comida a domicilio aqui</h1>
       <p class="mb-4">Revisa el menu y elige tus platillos favoritos.</p>
-      <a href="{{ url_for('menu') }}" class="btn btn-primary mx-auto">Ver menu</a>
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">Ver menu</a>
+        <a href="{{ url_for('orden') }}" class="btn btn-danger">Ver mi orden</a>
+        <a href="{{ url_for('mostrar_reservas') }}" class="btn btn-outline-secondary">Reservar mesa</a>
+      </div>
     </section>
   </main>
 

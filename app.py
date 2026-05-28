@@ -1,6 +1,7 @@
 import os
 import smtplib
 import bcrypt 
+import json
 from email.message import EmailMessage
 from datetime import datetime
 
@@ -35,6 +36,7 @@ usuarios = db["usuarios"]
 reservas = db["reservaciones"]
 opiniones_collection = db["opiniones"]
 envios = db["envios"]
+ordenes = db["ordenes"]
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "algo_secreto")
@@ -85,6 +87,45 @@ Si no solicitaste este cambio, ignora este correo.
         servidor.starttls()
         servidor.login(SMTP_USER, SMTP_PASSWORD)
         servidor.send_message(mensaje)
+
+
+def preparar_items_orden(items_json):
+    try:
+        items_recibidos = json.loads(items_json)
+    except (TypeError, json.JSONDecodeError):
+        items_recibidos = []
+
+    items = []
+    total = 0
+
+    for item in items_recibidos:
+        nombre = str(item.get("nombre", "")).strip()
+        if not nombre:
+            continue
+
+        try:
+            precio = float(item.get("precio", 50))
+        except (TypeError, ValueError):
+            precio = 50
+
+        try:
+            cantidad = int(item.get("cantidad", 1))
+        except (TypeError, ValueError):
+            cantidad = 1
+
+        precio = max(precio, 0)
+        cantidad = max(cantidad, 1)
+        subtotal = precio * cantidad
+
+        items.append({
+            "nombre": nombre,
+            "precio": precio,
+            "cantidad": cantidad,
+            "subtotal": subtotal,
+        })
+        total += subtotal
+
+    return items, total
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -380,9 +421,147 @@ def eliminar_reserva(reserva_id):
 def pedidos():
     return render_template("domicilio.html")
 
-@app.route("/orden")
+@app.route("/orden", methods=["GET"])
 def orden():
-    return render_template("orden.html")
+    filtro = {}
+    if session.get("usuario_id"):
+        filtro = {"usuario_id": session.get("usuario_id")}
+
+    ordenes_lista = list(ordenes.find(filtro).sort("creado_en", -1))
+
+    reservas_lista = []
+    if session.get("usuario_id"):
+        reservas_lista = list(
+            reservas.find({"usuario_id": session.get("usuario_id")}).sort("creado_en", -1)
+        )
+
+    return render_template(
+        "orden.html",
+        ordenes=ordenes_lista,
+        reservas=reservas_lista,
+        limpiar_orden=request.args.get("limpiar") == "1",
+    )
+
+
+@app.route("/orden/guardar", methods=["POST"])
+def guardar_orden():
+    items, total = preparar_items_orden(request.form.get("items", "[]"))
+    accion = request.form.get("accion", "guardar")
+
+    if not items:
+        flash("Agrega por lo menos un producto a tu orden")
+        return redirect(url_for("orden"))
+
+    estado = "finalizado" if accion == "finalizar" else "guardado"
+    orden = {
+        "usuario": session.get("nombre_usuario", request.form.get("nombre", "Invitado")),
+        "usuario_id": session.get("usuario_id"),
+        "correo": session.get("correo_usuario"),
+        "pedido": items,
+        "total": total,
+        "estado": estado,
+        "reserva_id": request.form.get("reserva_id", "").strip(),
+        "direccion": request.form.get("direccion", "").strip(),
+        "telefono": request.form.get("telefono", "").strip(),
+        "metodo_pago": request.form.get("metodo_pago", "").strip(),
+        "creado_en": datetime.utcnow(),
+    }
+
+    if estado == "finalizado":
+        orden["finalizado_en"] = datetime.utcnow()
+
+    ordenes.insert_one(orden)
+    flash("Orden finalizada correctamente" if estado == "finalizado" else "Orden guardada correctamente")
+    return redirect(url_for("orden", limpiar=1))
+
+
+@app.route("/orden/<orden_id>/editar", methods=["POST"])
+def editar_orden(orden_id):
+    try:
+        orden_object_id = ObjectId(orden_id)
+    except Exception:
+        flash("Orden no valida")
+        return redirect(url_for("orden"))
+
+    orden_actual = ordenes.find_one({"_id": orden_object_id})
+    if not orden_actual or orden_actual.get("estado") == "finalizado":
+        flash("Esta orden ya no se puede editar")
+        return redirect(url_for("orden"))
+
+    filtro = {"_id": orden_object_id}
+    if session.get("usuario_id"):
+        filtro["usuario_id"] = session.get("usuario_id")
+
+    nombres = request.form.getlist("nombre")
+    precios = request.form.getlist("precio")
+    cantidades = request.form.getlist("cantidad")
+    items_recibidos = []
+
+    for nombre, precio, cantidad in zip(nombres, precios, cantidades):
+        items_recibidos.append({
+            "nombre": nombre,
+            "precio": precio,
+            "cantidad": cantidad,
+        })
+
+    items, total = preparar_items_orden(json.dumps(items_recibidos))
+    if not items:
+        flash("La orden necesita por lo menos un producto")
+        return redirect(url_for("orden"))
+
+    resultado = ordenes.update_one(
+        filtro,
+        {"$set": {
+            "pedido": items,
+            "total": total,
+            "reserva_id": request.form.get("reserva_id", "").strip(),
+            "direccion": request.form.get("direccion", "").strip(),
+            "telefono": request.form.get("telefono", "").strip(),
+            "metodo_pago": request.form.get("metodo_pago", "").strip(),
+            "actualizado_en": datetime.utcnow(),
+        }},
+    )
+
+    flash("Orden editada correctamente" if resultado.modified_count else "No se hicieron cambios")
+    return redirect(url_for("orden"))
+
+
+@app.route("/orden/<orden_id>/eliminar", methods=["POST"])
+def eliminar_orden(orden_id):
+    try:
+        orden_object_id = ObjectId(orden_id)
+    except Exception:
+        flash("Orden no valida")
+        return redirect(url_for("orden"))
+
+    filtro = {"_id": orden_object_id, "estado": {"$ne": "finalizado"}}
+    if session.get("usuario_id"):
+        filtro["usuario_id"] = session.get("usuario_id")
+
+    resultado = ordenes.delete_one(filtro)
+    flash("Orden eliminada correctamente" if resultado.deleted_count else "La orden finalizada no se puede borrar")
+    return redirect(url_for("orden"))
+
+
+@app.route("/orden/<orden_id>/finalizar", methods=["POST"])
+def finalizar_orden(orden_id):
+    try:
+        orden_object_id = ObjectId(orden_id)
+    except Exception:
+        flash("Orden no valida")
+        return redirect(url_for("orden"))
+
+    filtro = {"_id": orden_object_id, "estado": {"$ne": "finalizado"}}
+    if session.get("usuario_id"):
+        filtro["usuario_id"] = session.get("usuario_id")
+
+    resultado = ordenes.update_one(
+        filtro,
+        {"$set": {"estado": "finalizado", "finalizado_en": datetime.utcnow()}},
+    )
+
+    flash("Orden finalizada correctamente" if resultado.modified_count else "Esta orden ya estaba finalizada")
+    return redirect(url_for("orden"))
 
 
 

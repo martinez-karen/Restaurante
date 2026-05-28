@@ -496,15 +496,10 @@
         </div>
       </div>
 
-      <div class=" m-s text-center w-100, orden">
-  <a href=/orden>
-    <button>Pedir</button>
-</a>
-</div>
-
-      
 </section>
+{% include "_orden_resumen.html" %}
 {% include "_footer.html" %}
+<script src="{{ url_for('static', filename='js/menu_orden.js') }}"></script>
 </body>
 
 </html>

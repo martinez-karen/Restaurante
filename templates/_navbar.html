@@ -13,6 +13,7 @@
       <a href="{{ url_for('mostrar_reservas') }}" class="text-light text-decoration-none">Reserva</a>
       <a href="{{ url_for('opiniones') }}" class="text-light text-decoration-none">Opiniones</a>
       <a href="{{ url_for('menu') }}" class="text-light text-decoration-none">Menu</a>
+      <a href="{{ url_for('orden') }}" class="text-light text-decoration-none">Orden</a>
 
       {% if session.get('nombre_usuario') %}
       <details class="position-relative">

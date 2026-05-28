@@ -1,44 +1,200 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orden de Pedido</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orden - Ambar</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
-    <div class="card shadow p-4" style="max-width: 800px; width: 100%;">
 
-        <h1 class="text-center mb-4 fs-3 fw-bold text-danger">
-            Finalizar Pedido
-        </h1>
+<body class="bg-dark d-flex flex-column min-vh-100">
+  {% include "_navbar.html" %}
 
-        <form class="d-flex flex-column gap-3">
+  <main class="container my-5 flex-grow-1">
+    {% with mensajes = get_flashed_messages() %}
+      {% if mensajes %}
+        <div class="alert alert-info shadow-sm" role="alert">
+          {% for mensaje in mensajes %}
+            <div>{{ mensaje }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-            <input type="text" class="form-control" placeholder="Nombre completo" required>
+    <section class="card shadow p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+          <h1 class="fw-bold mb-1">Tu orden</h1>
+          <p class="mb-0 text-muted">Revisa el ticket antes de guardarlo o finalizarlo.</p>
+        </div>
+        <a href="{{ url_for('menu') }}" class="btn btn-outline-secondary">Seguir agregando</a>
+      </div>
 
-            <input type="text" class="form-control" placeholder="Dirección" required>
+      <form method="post" action="{{ url_for('guardar_orden') }}" id="formOrdenActual">
+        <input type="hidden" name="items" id="itemsOrdenActual">
 
-            <input type="text" class="form-control" placeholder="Código Postal" required>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaOrdenActual"></tbody>
+          </table>
+        </div>
 
-            <input type="tel" class="form-control" placeholder="Teléfono" required>
+        <div id="ordenVacia" class="alert alert-secondary text-center">
+          Todavia no agregaste productos. Entra al menu y presiona Agregar.
+        </div>
 
-            <select class="form-select" required>
-                <option value="" disabled selected>Método de pago</option>
-                <option value="tarjeta">Tarjeta</option>
-                <option value="efectivo">Efectivo</option>
-                <option value="transferencia">Transferencia</option>
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <select class="form-select" name="reserva_id">
+              <option value="">Sin reserva relacionada</option>
+              {% for reserva in reservas %}
+                <option value="{{ reserva['_id'] }}">
+                  Reserva {{ reserva.fecha }} {{ reserva.hora }} - {{ reserva.personas }} persona(s)
+                </option>
+              {% endfor %}
             </select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="direccion" placeholder="Direccion (opcional)">
+          </div>
+          <div class="col-md-6">
+            <input type="tel" class="form-control" name="telefono" placeholder="Telefono (opcional)">
+          </div>
+          <div class="col-md-6">
+            <select class="form-select" name="metodo_pago">
+              <option value="">Metodo de pago (opcional)</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="transferencia">Transferencia</option>
+            </select>
+          </div>
+        </div>
 
-            <button type="submit" class="btn btn-danger w-100 mt-2">
-                Confirmar Pedido
-            </button>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4">
+          <h3 class="fw-bold mb-0">Total: $<span id="totalOrdenActual">0</span></h3>
+          <div class="d-flex flex-wrap gap-2">
+            <button type="submit" name="accion" value="guardar" class="btn btn-secondary">Guardar pedido</button>
+            <button type="submit" name="accion" value="finalizar" class="btn btn-danger">Finalizar pedido</button>
+          </div>
+        </div>
+      </form>
+    </section>
 
-        </form>
+    <section class="card shadow p-4">
+      <h2 class="fw-bold text-center mb-4">Pedidos guardados</h2>
 
-    </div>
+      {% if ordenes %}
+        <div class="d-flex flex-column gap-4">
+          {% for orden in ordenes %}
+            <div class="border rounded p-3 bg-light">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div>
+                  <h5 class="fw-bold mb-1">Usuario: {{ orden.usuario }}</h5>
+                  <span class="badge {% if orden.estado == 'finalizado' %}text-bg-success{% else %}text-bg-warning{% endif %}">
+                    {{ orden.estado }}
+                  </span>
+                </div>
+                <strong>Total: ${{ "%.2f"|format(orden.total) }}</strong>
+              </div>
 
+              {% if orden.estado == "finalizado" %}
+                <ul class="list-group mb-3">
+                  {% for item in orden.pedido %}
+                    <li class="list-group-item d-flex justify-content-between gap-3">
+                      <span>{{ item.cantidad }} x {{ item.nombre }}</span>
+                      <span>${{ "%.2f"|format(item.subtotal) }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+                <p class="text-muted mb-0">Este pedido ya fue finalizado y no se puede editar ni borrar.</p>
+              {% else %}
+                <form method="post" action="{{ url_for('editar_orden', orden_id=orden['_id']) }}">
+                  <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                      <thead>
+                        <tr>
+                          <th>Producto</th>
+                          <th>Precio</th>
+                          <th>Cantidad</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in orden.pedido %}
+                          <tr>
+                            <td><input class="form-control" name="nombre" value="{{ item.nombre }}" required></td>
+                            <td><input class="form-control" type="number" min="0" step="0.01" name="precio" value="{{ item.precio }}" required></td>
+                            <td><input class="form-control" type="number" min="1" name="cantidad" value="{{ item.cantidad }}" required></td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <select class="form-select" name="reserva_id">
+                        <option value="">Sin reserva relacionada</option>
+                        {% for reserva in reservas %}
+                          <option value="{{ reserva['_id'] }}" {% if orden.reserva_id == reserva['_id']|string %}selected{% endif %}>
+                            Reserva {{ reserva.fecha }} {{ reserva.hora }} - {{ reserva.personas }} persona(s)
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <input class="form-control" name="direccion" value="{{ orden.direccion }}" placeholder="Direccion">
+                    </div>
+                    <div class="col-md-6">
+                      <input class="form-control" name="telefono" value="{{ orden.telefono }}" placeholder="Telefono">
+                    </div>
+                    <div class="col-md-6">
+                      <input class="form-control" name="metodo_pago" value="{{ orden.metodo_pago }}" placeholder="Metodo de pago">
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="submit" class="btn btn-secondary">Guardar cambios</button>
+                  </div>
+                </form>
+
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                  <form method="post" action="{{ url_for('finalizar_orden', orden_id=orden['_id']) }}">
+                    <button type="submit" class="btn btn-success">Finalizar completamente</button>
+                  </form>
+                  <form method="post" action="{{ url_for('eliminar_orden', orden_id=orden['_id']) }}">
+                    <button type="submit" class="btn btn-outline-danger">Borrar pedido</button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-secondary text-center mb-0">
+          Todavia no tienes pedidos guardados.
+        </div>
+      {% endif %}
+    </section>
+  </main>
+
+  {% include "_footer.html" %}
+
+  <script>
+    const limpiarOrden = {{ "true" if limpiar_orden else "false" }};
+  </script>
+  <script src="{{ url_for('static', filename='js/orden.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
 </html>
