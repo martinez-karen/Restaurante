@@ -32,28 +32,56 @@
         <a href="{{ url_for('menu') }}" class="btn btn-outline-secondary">Seguir agregando</a>
       </div>
 
-      <form method="post" action="{{ url_for('guardar_orden') }}" id="formOrdenActual">
-        <input type="hidden" name="items" id="itemsOrdenActual">
+      {% if orden_actual %}
+        <form method="post" action="{{ url_for('actualizar_orden_actual') }}" class="mb-3">
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in orden_actual %}
+                  <tr>
+                    <td>
+                      {{ item.nombre }}
+                      <input type="hidden" name="nombre" value="{{ item.nombre }}">
+                    </td>
+                    <td>
+                      ${{ "%.2f"|format(item.precio) }}
+                      <input type="hidden" name="precio" value="{{ item.precio }}">
+                    </td>
+                    <td>
+                      <input class="form-control form-control-sm" type="number" min="1" name="cantidad" value="{{ item.cantidad }}">
+                    </td>
+                    <td>${{ "%.2f"|format(item.subtotal) }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
-        <div class="table-responsive">
-          <table class="table align-middle">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tablaOrdenActual"></tbody>
-          </table>
+          <button type="submit" class="btn btn-outline-secondary">Actualizar cantidades</button>
+        </form>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          {% for item in orden_actual %}
+            <form method="post" action="{{ url_for('quitar_item_orden_actual', item_index=loop.index0) }}">
+              <button type="submit" class="btn btn-outline-danger btn-sm">Borrar {{ item.nombre }}</button>
+            </form>
+          {% endfor %}
         </div>
-
-        <div id="ordenVacia" class="alert alert-secondary text-center">
+      {% else %}
+        <div class="alert alert-secondary text-center">
           Todavia no agregaste productos. Entra al menu y presiona Agregar.
         </div>
+      {% endif %}
 
+      <form method="post" action="{{ url_for('guardar_orden') }}">
         <div class="row g-3 mt-2">
           <div class="col-md-6">
             <select class="form-select" name="reserva_id">
@@ -82,10 +110,10 @@
         </div>
 
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4">
-          <h3 class="fw-bold mb-0">Total: $<span id="totalOrdenActual">0</span></h3>
+          <h3 class="fw-bold mb-0">Total: ${{ "%.2f"|format(orden_actual_total) }}</h3>
           <div class="d-flex flex-wrap gap-2">
-            <button type="submit" name="accion" value="guardar" class="btn btn-secondary">Guardar pedido</button>
-            <button type="submit" name="accion" value="finalizar" class="btn btn-danger">Finalizar pedido</button>
+            <button type="submit" name="accion" value="guardar" class="btn btn-secondary" {% if not orden_actual %}disabled{% endif %}>Guardar pedido</button>
+            <button type="submit" name="accion" value="finalizar" class="btn btn-danger" {% if not orden_actual %}disabled{% endif %}>Finalizar pedido</button>
           </div>
         </div>
       </form>
@@ -190,11 +218,7 @@
 
   {% include "_footer.html" %}
 
-  <script>
-    const limpiarOrden = {{ "true" if limpiar_orden else "false" }};
-  </script>
-  <script src="{{ url_for('static', filename='js/orden.js') }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>

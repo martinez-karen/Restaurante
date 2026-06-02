@@ -1,34 +1,22 @@
 import os
-import smtplib
-import bcrypt 
+import bcrypt
 import json
+import smtplib
 from email.message import EmailMessage
 from datetime import datetime
 
-from flask import Flask, render_template, request, redirect, flash, url_for, session
 from bson import ObjectId
-from pymongo import MongoClient
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+from pymongo import MongoClient
 
-
-def cargar_env(ruta=".env"):
-    if not os.path.exists(ruta):
-        return
-
-    with open(ruta, encoding="utf-8") as archivo:
-        for linea in archivo:
-            linea = linea.strip()
-            if not linea or linea.startswith("#") or "=" not in linea:
-                continue
-
-            clave, valor = linea.split("=", 1)
-            clave = clave.strip()
-            valor = valor.strip().strip('"').strip("'")
-            os.environ.setdefault(clave, valor)
-
-
-cargar_env()
-
+from ambar import (
+    agregar_item_orden,
+    calcular_total_orden,
+    enviar_correo_recuperacion,
+    password_valida,
+    preparar_items_orden,
+)
 
 client = MongoClient("mongodb+srv://24308060610098_db_user:karla1223@clusterkarla.qbnowlm.mongodb.net/?retryWrites=true&w=majority&appName=ClusterKarla")
 db = client["restaurante"]
@@ -41,91 +29,16 @@ ordenes = db["ordenes"]
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "algo_secreto")
 serializer = URLSafeTimedSerializer(app.secret_key)
-SMTP_HOSTNAME = os.environ.get("SMTP_HOSTNAME") or os.environ.get("SMPT_HOSTNAME") or "smtp.gmail.com"
-SMTP_TLS_PORT = int(os.environ.get("SMTP_TLS_PORT") or os.environ.get("SMPT_TLS_PORT") or 587)
-SMTP_USER = os.environ.get("SMTP_USER") or os.environ.get("SMPT_USER") or os.environ.get("GMAIL_USER")
-SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD") or os.environ.get("SMPT_PASSWORD") or os.environ.get("GMAIL_APP_PASSWORD")
-
-if SMTP_HOSTNAME == "smpt.gmail.com":
-    SMTP_HOSTNAME = "smtp.gmail.com"
-
-if SMTP_HOSTNAME == "smtp.gmail.com" and SMTP_PASSWORD:
-    SMTP_PASSWORD = SMTP_PASSWORD.replace(" ", "")
 
 
-def password_valida(password):
-    return (
-        len(password) >= 8
-        and any(letra.isupper() for letra in password)
-        and any(letra.islower() for letra in password)
-        and any(letra.isdigit() for letra in password)
-    )
-
-
-def enviar_correo_recuperacion(destinatario, enlace):
-    if not SMTP_USER or not SMTP_PASSWORD:
-        raise RuntimeError("Faltan SMTP_USER o SMTP_PASSWORD")
-
-    mensaje = EmailMessage()
-    mensaje["Subject"] = "Recuperacion de contraseña - Ambar"
-    mensaje["From"] = SMTP_USER
-    mensaje["To"] = destinatario
-    mensaje.set_content(
-        f"""Hola.
-
-Recibimos una solicitud para recuperar tu contraseña.
-Abre este enlace para crear una nueva:
-
-{enlace}
-
-El enlace vence en 30 minutos.
-Si no solicitaste este cambio, ignora este correo.
-"""
-    )
-
-    with smtplib.SMTP(SMTP_HOSTNAME, SMTP_TLS_PORT, timeout=15) as servidor:
-        servidor.starttls()
-        servidor.login(SMTP_USER, SMTP_PASSWORD)
-        servidor.send_message(mensaje)
-
-
-def preparar_items_orden(items_json):
-    try:
-        items_recibidos = json.loads(items_json)
-    except (TypeError, json.JSONDecodeError):
-        items_recibidos = []
-
-    items = []
-    total = 0
-
-    for item in items_recibidos:
-        nombre = str(item.get("nombre", "")).strip()
-        if not nombre:
-            continue
-
-        try:
-            precio = float(item.get("precio", 50))
-        except (TypeError, ValueError):
-            precio = 50
-
-        try:
-            cantidad = int(item.get("cantidad", 1))
-        except (TypeError, ValueError):
-            cantidad = 1
-
-        precio = max(precio, 0)
-        cantidad = max(cantidad, 1)
-        subtotal = precio * cantidad
-
-        items.append({
-            "nombre": nombre,
-            "precio": precio,
-            "cantidad": cantidad,
-            "subtotal": subtotal,
-        })
-        total += subtotal
-
-    return items, total
+@app.context_processor
+def inyectar_orden_actual():
+    items = session.get("orden_actual", [])
+    return {
+        "orden_actual": items,
+        "orden_actual_total": calcular_total_orden(items),
+        "orden_actual_cantidad": sum(int(item.get("cantidad", 1)) for item in items),
+    }
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -145,10 +58,7 @@ def inicio():
         if isinstance(password_guardada, str):
             password_guardada = password_guardada.encode("utf-8")
 
-        if not bcrypt.checkpw(
-            password.encode("utf-8"),
-            password_guardada
-        ):
+        if not bcrypt.checkpw(password.encode("utf-8"), password_guardada):
             flash("Contraseña incorrecta")
             return render_template("inicio.html")
 
@@ -180,7 +90,7 @@ def registrar():
         if not password_valida(password):
             flash("La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número")
             return render_template("registro.html")
-        
+
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         resultado = usuarios.insert_one({
@@ -197,7 +107,6 @@ def registrar():
         return redirect("/principal")
 
     return render_template("registro.html")
-
 
 
 @app.route("/principal")
@@ -280,6 +189,32 @@ def votar_opinion(opinion_id, accion):
     return redirect(url_for("opiniones"))
 
 
+@app.route("/opiniones/<opinion_id>/eliminar", methods=["POST"])
+def eliminar_opinion(opinion_id):
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        flash("Inicia sesion para eliminar tus opiniones")
+        return redirect(url_for("opiniones"))
+
+    try:
+        opinion_object_id = ObjectId(opinion_id)
+    except Exception:
+        flash("Opinion no valida")
+        return redirect(url_for("opiniones"))
+
+    resultado = opiniones_collection.delete_one({
+        "_id": opinion_object_id,
+        "usuario_id": usuario_id,
+    })
+
+    if resultado.deleted_count:
+        flash("Opinion eliminada correctamente")
+    else:
+        flash("Solo puedes eliminar opiniones de tu cuenta actual")
+
+    return redirect(url_for("opiniones"))
+
+
 @app.route("/acerca-de")
 def acerca_de():
     return render_template("acerca_de.html")
@@ -307,7 +242,7 @@ def recuperar():
 
         try:
             enviar_correo_recuperacion(email, enlace)
-        except Exception as error:
+        except Exception:
             app.logger.exception("Error enviando correo de recuperación")
             flash("No se pudo enviar el correo. Revisa la configuración SMTP.")
             return render_template("recuperar_contraseña.html")
@@ -352,8 +287,8 @@ def restablecer_password(token):
 
         nuevo_hash = bcrypt.hashpw(
             password.encode("utf-8"),
-            bcrypt.gensalt()
-            ).decode("utf-8")
+            bcrypt.gensalt(),
+        ).decode("utf-8")
 
         usuarios.update_one(
             {"correo": email},
@@ -397,6 +332,7 @@ def mostrar_reservas():
     reservas_lista = list(reservas.find(filtro).sort("creado_en", -1))
     return render_template("reservas.html", reservas=reservas_lista)
 
+
 @app.route("/reservas/<reserva_id>/eliminar", methods=["POST"])
 def eliminar_reserva(reserva_id):
     try:
@@ -417,15 +353,17 @@ def eliminar_reserva(reserva_id):
 
     return redirect(url_for("mostrar_reservas"))
 
+
 @app.route("/domicilio")
 def pedidos():
     return render_template("domicilio.html")
 
+
 @app.route("/orden", methods=["GET"])
 def orden():
-    filtro = {}
-    if session.get("usuario_id"):
-        filtro = {"usuario_id": session.get("usuario_id")}
+    filtro = {"usuario_id": session.get("usuario_id")}
+    if not session.get("usuario_id"):
+        filtro = {"usuario_id": "__sin_usuario__"}
 
     ordenes_lista = list(ordenes.find(filtro).sort("creado_en", -1))
 
@@ -439,13 +377,64 @@ def orden():
         "orden.html",
         ordenes=ordenes_lista,
         reservas=reservas_lista,
-        limpiar_orden=request.args.get("limpiar") == "1",
     )
+
+
+@app.route("/orden/agregar", methods=["POST"])
+def agregar_a_orden():
+    nombre = request.form.get("nombre", "").strip()
+    precio = request.form.get("precio", 50)
+    volver = request.form.get("volver") or request.referrer or url_for("menu")
+
+    session["orden_actual"] = agregar_item_orden(session.get("orden_actual", []), nombre, precio)
+    session.modified = True
+
+    flash(f"{nombre} agregado a tu orden" if nombre else "No se pudo agregar el producto")
+    return redirect(volver)
+
+
+@app.route("/orden/actualizar", methods=["POST"])
+def actualizar_orden_actual():
+    nombres = request.form.getlist("nombre")
+    precios = request.form.getlist("precio")
+    cantidades = request.form.getlist("cantidad")
+    items_recibidos = []
+
+    for nombre, precio, cantidad in zip(nombres, precios, cantidades):
+        items_recibidos.append({
+            "nombre": nombre,
+            "precio": precio,
+            "cantidad": cantidad,
+        })
+
+    items, _ = preparar_items_orden(json.dumps(items_recibidos))
+    session["orden_actual"] = items
+    session.modified = True
+    flash("Orden actualizada")
+    return redirect(url_for("orden"))
+
+
+@app.route("/orden/quitar/<int:item_index>", methods=["POST"])
+def quitar_item_orden_actual(item_index):
+    items = list(session.get("orden_actual", []))
+    if 0 <= item_index < len(items):
+        items.pop(item_index)
+        session["orden_actual"] = items
+        session.modified = True
+        flash("Producto eliminado de la orden")
+    else:
+        flash("No se encontro el producto")
+
+    return redirect(url_for("orden"))
 
 
 @app.route("/orden/guardar", methods=["POST"])
 def guardar_orden():
-    items, total = preparar_items_orden(request.form.get("items", "[]"))
+    if not session.get("usuario_id"):
+        flash("Inicia sesion para guardar tu orden")
+        return redirect(url_for("inicio"))
+
+    items, total = preparar_items_orden(json.dumps(session.get("orden_actual", [])))
     accion = request.form.get("accion", "guardar")
 
     if not items:
@@ -453,7 +442,7 @@ def guardar_orden():
         return redirect(url_for("orden"))
 
     estado = "finalizado" if accion == "finalizar" else "guardado"
-    orden = {
+    orden_guardada = {
         "usuario": session.get("nombre_usuario", request.form.get("nombre", "Invitado")),
         "usuario_id": session.get("usuario_id"),
         "correo": session.get("correo_usuario"),
@@ -468,29 +457,36 @@ def guardar_orden():
     }
 
     if estado == "finalizado":
-        orden["finalizado_en"] = datetime.utcnow()
+        orden_guardada["finalizado_en"] = datetime.utcnow()
 
-    ordenes.insert_one(orden)
+    ordenes.insert_one(orden_guardada)
+    session.pop("orden_actual", None)
+    session.modified = True
     flash("Orden finalizada correctamente" if estado == "finalizado" else "Orden guardada correctamente")
     return redirect(url_for("orden", limpiar=1))
 
 
 @app.route("/orden/<orden_id>/editar", methods=["POST"])
 def editar_orden(orden_id):
+    if not session.get("usuario_id"):
+        flash("Inicia sesion para editar tus ordenes")
+        return redirect(url_for("inicio"))
+
     try:
         orden_object_id = ObjectId(orden_id)
     except Exception:
         flash("Orden no valida")
         return redirect(url_for("orden"))
 
-    orden_actual = ordenes.find_one({"_id": orden_object_id})
+    orden_actual = ordenes.find_one({
+        "_id": orden_object_id,
+        "usuario_id": session.get("usuario_id"),
+    })
     if not orden_actual or orden_actual.get("estado") == "finalizado":
         flash("Esta orden ya no se puede editar")
         return redirect(url_for("orden"))
 
-    filtro = {"_id": orden_object_id}
-    if session.get("usuario_id"):
-        filtro["usuario_id"] = session.get("usuario_id")
+    filtro = {"_id": orden_object_id, "usuario_id": session.get("usuario_id")}
 
     nombres = request.form.getlist("nombre")
     precios = request.form.getlist("precio")
@@ -528,15 +524,21 @@ def editar_orden(orden_id):
 
 @app.route("/orden/<orden_id>/eliminar", methods=["POST"])
 def eliminar_orden(orden_id):
+    if not session.get("usuario_id"):
+        flash("Inicia sesion para borrar tus ordenes")
+        return redirect(url_for("inicio"))
+
     try:
         orden_object_id = ObjectId(orden_id)
     except Exception:
         flash("Orden no valida")
         return redirect(url_for("orden"))
 
-    filtro = {"_id": orden_object_id, "estado": {"$ne": "finalizado"}}
-    if session.get("usuario_id"):
-        filtro["usuario_id"] = session.get("usuario_id")
+    filtro = {
+        "_id": orden_object_id,
+        "usuario_id": session.get("usuario_id"),
+        "estado": {"$ne": "finalizado"},
+    }
 
     resultado = ordenes.delete_one(filtro)
     flash("Orden eliminada correctamente" if resultado.deleted_count else "La orden finalizada no se puede borrar")
@@ -545,15 +547,21 @@ def eliminar_orden(orden_id):
 
 @app.route("/orden/<orden_id>/finalizar", methods=["POST"])
 def finalizar_orden(orden_id):
+    if not session.get("usuario_id"):
+        flash("Inicia sesion para finalizar tus ordenes")
+        return redirect(url_for("inicio"))
+
     try:
         orden_object_id = ObjectId(orden_id)
     except Exception:
         flash("Orden no valida")
         return redirect(url_for("orden"))
 
-    filtro = {"_id": orden_object_id, "estado": {"$ne": "finalizado"}}
-    if session.get("usuario_id"):
-        filtro["usuario_id"] = session.get("usuario_id")
+    filtro = {
+        "_id": orden_object_id,
+        "usuario_id": session.get("usuario_id"),
+        "estado": {"$ne": "finalizado"},
+    }
 
     resultado = ordenes.update_one(
         filtro,
@@ -562,7 +570,6 @@ def finalizar_orden(orden_id):
 
     flash("Orden finalizada correctamente" if resultado.modified_count else "Esta orden ya estaba finalizada")
     return redirect(url_for("orden"))
-
 
 
 if __name__ == "__main__":

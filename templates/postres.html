@@ -55,8 +55,17 @@
             <img src="https://i.pinimg.com/1200x/bd/90/3a/bd903a8a9e6e0fcf91e595fcde9d4721.jpg"
               class="card-img-top" alt="flan" height="225">
             <div class="card-body text-center">
-              <p class="card-text">Flan napolitano</p>
-              <button class="btn btn-gris-degradado">Agregar</button>
+              <p class="card-text">
+              Flan napolitano
+            </p>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Flan napolitano">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
             </div>
           </div>
         </div>
@@ -66,8 +75,17 @@
             <img src="https://i.pinimg.com/1200x/5e/10/38/5e10383b6d28536bd27db895e693efdc.jpg"
               class="card-img-top" alt="pastel de chocolate" height="225">
             <div class="card-body text-center">
-              <p class="card-text">pastel de chocolate</p>
-              <button class="btn btn-gris-degradado">Agregar</button>
+              <p class="card-text">
+              pastel de chocolate
+            </p>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="pastel de chocolate">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
             </div>
           </div>
         </div>
@@ -77,8 +95,17 @@
             <img src="https://i.pinimg.com/1200x/7c/67/88/7c67881ea49c7cd37744a62486639141.jpg"
               class="card-img-top" alt="tiramusu" height="225">
             <div class="card-body text-center">
-              <p class="card-text">tiramusi</p>
-              <button class="btn btn-gris-degradado">Agregar</button>
+              <p class="card-text">
+              tiramusi
+            </p>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="tiramusi">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
             </div>
           </div>
         </div>
@@ -101,9 +128,14 @@
             <p class="card-text">
               churros
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="churros">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -124,10 +156,14 @@
             <p class="card-text">
               crepas
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="crepas">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -146,12 +182,16 @@
           <divs class="card-body text-center">
 
             <p class="card-text">
-               macarons
+              macarons
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="macarons">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </divs>
         </div>
@@ -164,7 +204,7 @@
 
   {% include "_orden_resumen.html" %}
   {% include "_footer.html" %}
-  <script src="{{ url_for('static', filename='js/menu_orden.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>

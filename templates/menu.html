@@ -63,9 +63,14 @@
             <p class="card-text">
               Filete Mignon a la Pimienta Negra
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Filete Mignon a la Pimienta Negra">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -86,10 +91,14 @@
             <p class="card-text">
               Solomillo de Cerdo con Salsa de Mango y Chile
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Solomillo de Cerdo con Salsa de Mango y Chile">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -101,19 +110,23 @@
           <img 
             src="https://i.pinimg.com/1200x/05/ae/6b/05ae6bdc3499cc30cb2f63cc38c4cf51.jpg" 
             class="card-img-top" 
-            alt="Steak Tartar Clásico"
+            alt="Steak Tartar ClÃ¡sico"
             height="225"
           >
 
           <div class="card-body text-center">
 
             <p class="card-text">
-              Steak Tartar Clásico
+              Steak Tartar ClÃ¡sico
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Steak Tartar Cl&#195;&#161;sico">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -131,16 +144,21 @@
           <img 
             src="https://i.pinimg.com/736x/71/4b/9d/714b9d8cab58045d1696617303dcfc45.jpg" 
             class="card-img-top" 
-            alt="Lasaña"
+            alt="LasaÃ±a"
             height="225"
           >
           <div class="card-body text-center">
             <p class="card-text">
-              Lasaña
+              LasaÃ±a
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Lasa&#195;&#177;a">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -161,10 +179,14 @@
             <p class="card-text">
               Spaghetti alla Carbonara
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Spaghetti alla Carbonara">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -183,12 +205,16 @@
           <div class="card-body text-center">
 
             <p class="card-text">
-              Focaccia 
+              Focaccia
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Focaccia">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -215,9 +241,14 @@
             <p class="card-text">
               pizza cuatro estaciones
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="pizza cuatro estaciones">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -238,10 +269,14 @@
             <p class="card-text">
               Classic Margherita Pizza
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Classic Margherita Pizza">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -262,10 +297,14 @@
             <p class="card-text">
               Pizza Cottage Cheese
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Pizza Cottage Cheese">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -290,9 +329,14 @@
             <p class="card-text">
               Pollo en mole y arroz
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Pollo en mole y arroz">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -313,10 +357,14 @@
             <p class="card-text">
               Sopes
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Sopes">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -337,10 +385,14 @@
             <p class="card-text">
               Enchiladas salsa roja
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Enchiladas salsa roja">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -365,9 +417,14 @@
             <p class="card-text">
               Tamales
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Tamales">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -388,10 +445,14 @@
             <p class="card-text">
               Empanadas
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Empanadas">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -412,10 +473,14 @@
             <p class="card-text">
               Pozole
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Pozole">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -423,161 +488,6 @@
     </div>
   </div>  
 </div>
-
-  <div class="container">
-    <div class="text-center text-white m-5"><h3 class="fw-bold">Asiatica</h3></div>
-    <div class="row g-4">
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://tipsparatuviaje.com/wp-content/uploads/2016/07/2.-Pad-Thai.jpg" 
-            class="card-img-top" 
-            alt="pad thai"
-            height="225"
-          >
-          <div class="card-body text-center">
-            <p class="card-text">
-              Pad Thai
-            </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/736x/2d/f8/bf/2df8bffcb49ad89a31d7a1e8f06528f9.jpg" 
-            class="card-img-top" 
-            alt="Nigiri salmon y tuna"
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-              Sushi- Nigiri de Salmon y Tuna
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/736x/8c/50/33/8c5033515c5fa3c8d486fca983fcc31f.jpg" 
-            class="card-img-top" 
-            alt="Maki de pepino "
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-              Sushi- Maki 
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-  </div>
-  <div class="container">
-    <div class="text-center text-white m-5"><h3></h3></div>
-    <div class="row g-4">
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/1200x/87/7a/ce/877ace87eff27016a0379d83e6fe4716.jpg" 
-            class="card-img-top" 
-            alt="sushi uramaki"
-            height="225"
-          >
-          <div class="card-body text-center">
-            <p class="card-text">
-              Sushi- Uramaki relleno de salmon
-            </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/1200x/59/6f/ff/596fff328647a91bc21a06a1c3d0dec0.jpg" 
-            class="card-img-top" 
-            alt="temaki"
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-              Sushi- Temaki de camaron
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/1200x/c6/fc/07/c6fc074757a49b907947e8a3df37ccf4.jpg" 
-            class="card-img-top" 
-            alt="Chow Mein"
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-              Chow Mein
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-
-
   <div class="container">
     <div class="text-center text-white m-5"><h3 class="fw-bold">Saludable</h3></div>
     <div class="row g-4">
@@ -595,9 +505,14 @@
             <p class="card-text">
               Pechuga de pollo a la plancha con arroz y ensalada
             </p>
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Pechuga de pollo a la plancha con arroz y ensalada">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -618,10 +533,14 @@
             <p class="card-text">
               Ensalada de atun
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Ensalada de atun">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
@@ -633,99 +552,32 @@
           <img 
             src="https://i.pinimg.com/736x/1b/6a/f5/1b6af59e675dc3c55a382f6e545d21e4.jpg" 
             class="card-img-top" 
-            alt="ensalada de champiñones"
+            alt="ensalada de champiÃ±ones"
             height="225"
           >
 
           <div class="card-body text-center">
 
             <p class="card-text">
-              Ensalada de champiñones
+              Ensalada de champiÃ±ones
             </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
+            <form method="post" action="{{ url_for('agregar_a_orden') }}">
+              <input type="hidden" name="nombre" value="Ensalada de champi&#195;&#177;ones">
+              <input type="hidden" name="precio" value="50">
+              <input type="hidden" name="volver" value="{{ request.path }}">
+              <button type="submit" class="btn btn-gris-degradado">
+                Agregar
+              </button>
+            </form>
 
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/1200x/fa/d5/b5/fad5b51ef770f2535b958ccae471c559.jpg" 
-            class="card-img-top" 
-            alt="Alubias"
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-            Alubias Verdinas con Mejillones
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-            <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/736x/66/4b/ea/664bea73d502f437efe5e8dbff500e16.jpg" 
-            class="card-img-top" 
-            alt="Canelones"
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-              Canelones de brócoli y puerro
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-
-          <img 
-            src="https://i.pinimg.com/1200x/e3/fc/8d/e3fc8d02af903b91c9f58a49d666159e.jpg" 
-            class="card-img-top" 
-            alt="sopa"
-            height="225"
-          >
-
-          <div class="card-body text-center">
-
-            <p class="card-text">
-            Sopa Minestrone
-            </p>
-
-            <button class="btn btn-gris-degradado">
-              Agregar
-            </button>
-
-          </div>
-        </div>
-      </div>
 </section>
 {% include "_orden_resumen.html" %}
 {% include "_footer.html" %}
-<script src="{{ url_for('static', filename='js/menu_orden.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>

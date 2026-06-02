@@ -1,8 +1,19 @@
 <div class="orden-flotante shadow">
   <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-    <strong>Orden (<span data-orden-contador>0</span>)</strong>
-    <strong>$<span data-orden-total>0.00</span></strong>
+    <strong>Orden ({{ orden_actual_cantidad }})</strong>
+    <strong>${{ "%.2f"|format(orden_actual_total) }}</strong>
   </div>
-  <ul class="list-group list-group-flush small mb-3" data-orden-lista></ul>
-  <a href="{{ url_for('orden') }}" class="btn btn-danger w-100">Pedir</a>
+  <ul class="list-group list-group-flush small mb-3">
+    {% if orden_actual %}
+      {% for item in orden_actual %}
+        <li class="list-group-item d-flex justify-content-between gap-2">
+          <span>{{ item.cantidad }} x {{ item.nombre }}</span>
+          <strong>${{ "%.2f"|format(item.subtotal) }}</strong>
+        </li>
+      {% endfor %}
+    {% else %}
+      <li class="list-group-item text-muted">Sin productos todavia</li>
+    {% endif %}
+  </ul>
+  <a href="{{ url_for('orden') }}" class="btn btn-outline-secondary w-100">Pedir</a>
 </div>
